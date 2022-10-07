@@ -41,12 +41,9 @@ mv "$(npm root --global)/aws-lambda-ric" "$tmp_dir"
 # create optimized and bundled version
 npx --yes @vercel/ncc build "$tmp_dir/aws-lambda-ric/bin/index.js" -o "$tmp_dir/vercel-ncc-aws-lambda-ric"
 
-ric_filename="${OS:-}__${ARCHITECTURE:-}__nodejs-${NODEJS_MAJOR_VERSION:-}__aws-lambda-ric.tar.gz"
-vercel_ncc_ric_filename="${OS:-}__${ARCHITECTURE:-}__nodejs-${NODEJS_MAJOR_VERSION:-}__vercel-ncc-aws-lambda-ric.tar.gz"
-
 # compress to .tar.gz
-tar -czf "$ric_filename" "./aws-lambda-ric"
-tar -czf "$vercel_ncc_ric_filename" "./vercel-ncc-aws-lambda-ric"
+tar -czf "${RIC_FILENAME:-}" "./aws-lambda-ric"
+tar -czf "${VERCEL_NCC_RIC_FILENAME:-}" "./vercel-ncc-aws-lambda-ric"
 
 # move to output
 ls
