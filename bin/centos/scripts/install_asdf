@@ -9,4 +9,4 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
 
 # install asdf
 # shellcheck disable=SC2016
-sed -i -e '1 i . $HOME/.asdf/asdf.sh' -e '1 i . $HOME/.asdf/completions/asdf.bash' /etc/bash
+sed -i -e '1 i . $HOME/.asdf/asdf.sh' -e '1 i . $HOME/.asdf/completions/asdf.bash' /etc/bashrc
