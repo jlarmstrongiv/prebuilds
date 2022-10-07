@@ -13,7 +13,6 @@ Helpers for code quality are located in `bin/helpers`
 
 ### Containers
 
-- centos `public.ecr.aws/amazonlinux/amazonlinux:2`
 - fedora `public.ecr.aws/amazonlinux/amazonlinux:2022`
 - ubuntu `public.ecr.aws/lts/ubuntu:jammy`
 
