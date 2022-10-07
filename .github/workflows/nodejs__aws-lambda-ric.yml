@@ -36,7 +36,7 @@ jobs:
     concurrency:
       cancel-in-progress: true
       group: ${{ github.ref }}__${{ github.workflow }}__${{ github.job }}
-    if: ${{ github.event_name == "schedule" || needs.should-run.outputs.has-changed == "true" }}
+    if: ${{ github.event_name == 'schedule' || needs.should-run.outputs.has-changed == 'true' }}
     needs:
       - should-run
     outputs:
