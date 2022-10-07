@@ -42,6 +42,8 @@ mv "$(npm root --global)/aws-lambda-ric" "$tmp_dir"
 npx --yes @vercel/ncc build "$tmp_dir/aws-lambda-ric/bin/index.js" -o "$tmp_dir/vercel-ncc-aws-lambda-ric"
 
 # compress to .tar.gz
+echo "${RIC_FILENAME:-}"
+echo "${VERCEL_NCC_RIC_FILENAME:-}"
 tar -czf "${RIC_FILENAME:-}" "./aws-lambda-ric"
 tar -czf "${VERCEL_NCC_RIC_FILENAME:-}" "./vercel-ncc-aws-lambda-ric"
 
