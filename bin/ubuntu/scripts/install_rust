@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+asdf plugin-add rust https://github.com/asdf-community/asdf-rust.git
+
+# avoid docs installation https://github.com/asdf-community/asdf-rust#configuration
+export RUST_WITHOUT=rust-docs
+
+# rust_MAJOR_VERSION defined in the environment
+rust_major_version="${RUST_MAJOR_VERSION:-}"
+
+rust_version="$(asdf latest rust "$rust_major_version")"
+
+asdf install rust "$rust_version"
+asdf global rust "$rust_version"
+rustc --version
+cargo --version
