@@ -17,6 +17,10 @@ jobs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: checkout repository
+        timeout-minutes: 5
+        uses: actions/checkout@v3
+
       - id: create-tag
         name: create tag
         timeout-minutes: 5
