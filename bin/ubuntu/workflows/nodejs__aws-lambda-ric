@@ -5,7 +5,7 @@ set -euo pipefail
 # setup #
 #########
 
-os_script_path="$(dirname "$(realpath -s "$0")")/../"
+os_script_path="$(dirname "$(realpath -s "$0")")/.."
 
 # setup os
 "$os_script_path/scripts/setup"
