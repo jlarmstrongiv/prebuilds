@@ -67,6 +67,13 @@ jobs:
         timeout-minutes: 15
         uses: ./.github/composite/setup-docker
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - id: get-os
         name: get os
         timeout-minutes: 5
@@ -104,6 +111,7 @@ jobs:
           RIC_FILENAME: ${{ steps.get-filenames.outputs.ric_filename }}
           VERCEL_NCC_RIC_FILENAME: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
         run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
           docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
 
       - name: Upload ric
