@@ -114,7 +114,7 @@ jobs:
           docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
 
       - name: Upload ric
-        uses: softprops/action-gh-release@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 15
@@ -125,7 +125,7 @@ jobs:
           asset_content_type: application/gzip
 
       - name: Upload vercel_ncc_ric
-        uses: softprops/action-gh-release@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 15
