@@ -7,11 +7,12 @@ on:
     # rebuild every day at 1am UTC for security and updates
     - cron: "0 1 * * *"
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.ref }}__${{ github.workflow }}
+
 jobs:
   setup:
-    concurrency:
-      cancel-in-progress: true
-      group: ${{ github.ref }}__${{ github.workflow }}__${{ github.job }}
     outputs:
       release_id: ${{ steps.create_release.outputs.id }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
