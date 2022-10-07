@@ -102,7 +102,7 @@ jobs:
           RIC_FILENAME: ${{ steps.get-filenames.outputs.ric_filename }}
           VERCEL_NCC_RIC_FILENAME: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
         run: |
-          docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$PWD:/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
+          docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
 
       - name: Upload ric
         uses: softprops/action-gh-release@v1

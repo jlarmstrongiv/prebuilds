@@ -38,8 +38,8 @@ Helpers for code quality are located in `bin/helpers`
 
 ### Docker commands
 
-- interactive `docker run --platform <platform> --entrypoint /bin/bash -it -v "$PWD":/var/task --rm <image>`
-- command `docker run --platform <platform> --entrypoint "/bin/bash" -v "$PWD:/var/task" --rm <image> -c "<bash-commands>"`
+- interactive `docker run --platform <platform> --entrypoint /bin/bash -it -v "$(pwd):/var/task" --rm <image>`
+- command `docker run --platform <platform> --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm <image> -c "<bash-commands>"`
 
 # Builds
 
