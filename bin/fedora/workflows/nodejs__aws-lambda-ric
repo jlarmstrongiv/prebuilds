@@ -40,7 +40,8 @@ cd "$tmp_dir" || exit 1
 mv "$(npm root --global)/aws-lambda-ric" "$tmp_dir"
 
 # create optimized and bundled version
-npx --yes @vercel/ncc build "$tmp_dir/aws-lambda-ric/bin/index.js" -o "$tmp_dir/vercel-ncc-aws-lambda-ric"
+# non-interactive https://stackoverflow.com/a/69006263
+npm_config_yes=true npx @vercel/ncc build "$tmp_dir/aws-lambda-ric/bin/index.js" -o "$tmp_dir/vercel-ncc-aws-lambda-ric"
 
 # compress to .tar.gz
 tar -czf "${RIC_FILENAME:-}" "./aws-lambda-ric"
