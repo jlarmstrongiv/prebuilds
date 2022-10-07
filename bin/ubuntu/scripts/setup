@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# permissions https://github.com/lovell/sharp/blob/main/.github/workflows/ci.yml#L89
+chown root.root .
+
 apt-get update
 # software-properties-common https://stackoverflow.com/a/52091668
 # noninteractive https://stackoverflow.com/a/62994133

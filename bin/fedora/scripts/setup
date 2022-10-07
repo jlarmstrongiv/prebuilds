@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+# permissions https://github.com/lovell/sharp/blob/main/.github/workflows/ci.yml#L89
+chown root.root .

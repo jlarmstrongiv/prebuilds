@@ -29,7 +29,8 @@ set -u
 apt-get install -y g++ make cmake unzip tar gzip autoconf automake libtool
 
 # install aws-lambda-ric
-npm install --global aws-lambda-ric
+# permissions https://github.com/lovell/sharp/blob/main/.github/workflows/ci.yml#L89
+npm install --global --build-from-source --unsafe-perm aws-lambda-ric
 
 # use tmp directory
 tmp_dir="$(mktemp -d)"
