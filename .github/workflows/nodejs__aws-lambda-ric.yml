@@ -112,6 +112,7 @@ jobs:
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
           docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
+          ls
 
       - name: Upload ric
         uses: actions/upload-release-asset@v1
