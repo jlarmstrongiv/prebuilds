@@ -97,7 +97,9 @@ jobs:
       - name: compile
         shell: bash
         env:
+          IMAGE: ${{ matrix.image }}
           OS: ${{ steps.get-os.outputs.os }}
+          PLATFORM: ${{ matrix.platform }}
           NODEJS_MAJOR_VERSION: ${{ matrix.nodejs }}
           RIC_FILENAME: ${{ steps.get-filenames.outputs.ric_filename }}
           VERCEL_NCC_RIC_FILENAME: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
