@@ -99,6 +99,8 @@ jobs:
           vercel_ncc_ric_filename="${OS:-}__${ARCHITECTURE:-}__nodejs-${NODEJS_MAJOR_VERSION:-}__vercel-ncc-aws-lambda-ric.tar.gz"
           echo "::set-output name=ric_filename::$ric_filename"
           echo "::set-output name=vercel_ncc_ric_filename::$vercel_ncc_ric_filename"
+          echo "$ric_filename"
+          echo "$vercel_ncc_ric_filename"
 
       - name: compile
         shell: bash
@@ -110,6 +112,8 @@ jobs:
           RIC_FILENAME: ${{ steps.get-filenames.outputs.ric_filename }}
           VERCEL_NCC_RIC_FILENAME: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
         run: |
+          echo "${{ steps.get-filenames.outputs.ric_filename }}"
+          echo "${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}"
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
           docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
           ls
