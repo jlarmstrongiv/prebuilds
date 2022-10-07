@@ -40,9 +40,6 @@ jobs:
     timeout-minutes: 15
 
   build-and-upload:
-    concurrency:
-      cancel-in-progress: true
-      group: ${{ github.ref }}__${{ github.workflow }}__${{ github.job }}
     needs:
       - setup
     runs-on: ubuntu-latest
@@ -73,11 +70,15 @@ jobs:
         name: get os
         timeout-minutes: 5
         uses: ./.github/composite/get-os
+        with:
+          IMAGE: ${{ matrix.image }}
 
       - id: get-architecture
         name: get architecture
         timeout-minutes: 5
         uses: ./.github/composite/get-architecture
+        with:
+          PLATFORM: ${{ matrix.platform }}
 
       - id: get-filenames
         name: get filenames
