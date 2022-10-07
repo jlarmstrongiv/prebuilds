@@ -15,7 +15,7 @@ os_script_path="$(dirname "$(realpath -s "$0")")/.."
 # finish asdf installation
 set +u
 # shellcheck source=/dev/null
-source ~/.bashrc
+source /etc/bashrc
 set -u
 
 # install nodejs
