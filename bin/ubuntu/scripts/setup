@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+apt-get update
+# software-properties-common https://stackoverflow.com/a/52091668
+# noninteractive https://stackoverflow.com/a/62994133
+DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common
+
+# uninstall http://www.thelinuxfaq.com/ubuntu/ubuntu-17-04-zesty-zapus/software-properties-common?type=uninstall
+# apt-get purge --auto-remove software-properties-common

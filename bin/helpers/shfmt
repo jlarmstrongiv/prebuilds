@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# avoid for loops with find https://github.com/koalaman/shellcheck/wiki/SC2044
+while IFS= read -r -d '' file; do
+    if [[ "$(head -n 1 "$file")" == "#!/usr/bin/env bash" ]]; then
+        shfmt --write --indent 4 --case-indent "$file"
+    fi
+done < <(find bin -type f -not -name "*\.md" -print0)

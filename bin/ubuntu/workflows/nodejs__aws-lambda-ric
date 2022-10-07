@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+#########
+# setup #
+#########
+
+os_script_path="$(dirname "$(realpath -s "$0")")/../"
+
+# setup os
+"$os_script_path/scripts/setup"
+
+# install asdf
+"$os_script_path/scripts/install_asdf"
+# finish asdf installation
+set +u
+# shellcheck source=/dev/null
+source ~/.bashrc
+set -u
+
+# install nodejs
+"$os_script_path/scripts/install_node"
+
+##########
+# script #
+##########
+
+# install aws-lambda-ric dependencies
+apt-get install -y g++ make cmake unzip tar gzip autoconf automake libtool
+
+# install aws-lambda-ric
+npm install --global aws-lambda-ric
+
+# use tmp directory
+tmp_dir="$(mktemp -d)"
+cd "$tmp_dir" || exit 1
+
+# move module to tmp dir
+mv "$(npm root --global)/aws-lambda-ric" "$tmp_dir"
+
+# create optimized and bundled version
+npx --yes @vercel/ncc build "$tmp_dir/aws-lambda-ric/bin/index.js" -o "$tmp_dir/vercel-ncc-aws-lambda-ric"
+
+ric_filename="${OS:-}__${ARCHITECTURE:-}__nodejs-${NODEJS_MAJOR_VERSION:-}__aws-lambda-ric.tar.gz"
+vercel_ncc_ric_filename="${OS:-}__${ARCHITECTURE:-}__nodejs-${NODEJS_MAJOR_VERSION:-}__vercel-ncc-aws-lambda-ric.tar.gz"
+
+# compress to .tar.gz
+tar -czf "$ric_filename" "./aws-lambda-ric"
+tar -czf "$vercel_ncc_ric_filename" "./vercel-ncc-aws-lambda-ric"
+
+# move to output
+mv "$ric_filename" "$vercel_ncc_ric_filename" "/var/task"
+
+# cleanup
+rm -rf "$tmp_dir"

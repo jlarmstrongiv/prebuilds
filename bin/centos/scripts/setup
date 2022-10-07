@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+yum install -y amazon-linux-extras 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'

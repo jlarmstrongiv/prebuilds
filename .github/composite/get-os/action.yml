@@ -1,0 +1,31 @@
+name: get-os
+description: get os name from image name
+
+inputs:
+  IMAGE:
+    required: true
+    description: docker image name
+
+outputs:
+  os:
+    description: "os"
+    value: ${{ steps.get-os.outputs.os }}
+
+runs:
+  using: composite
+  steps:
+    - name: get os
+      shell: bash
+      id: get-os
+      run: |
+        if [[ "${{ inputs.IMAGE }}" == "public.ecr.aws/amazonlinux/amazonlinux:2" ]]; then
+            os="centos"
+        elif [[ "${{ inputs.IMAGE }}" == "public.ecr.aws/amazonlinux/amazonlinux:2022" ]]; then
+            os="fedora"
+        elif [[ "${{ inputs.IMAGE }}" == "public.ecr.aws/lts/ubuntu:jammy" ]]; then
+            os="ubuntu"
+        else
+            echo "[get-os/action.yml]: unsupported image \"${{ inputs.IMAGE }}\"" >&2
+            exit 1
+        fi
+        echo "::set-output name=os::$os"

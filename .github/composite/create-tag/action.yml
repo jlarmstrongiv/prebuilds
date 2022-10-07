@@ -1,0 +1,22 @@
+name: create tag
+description: create tag for versioning
+
+outputs:
+  tag:
+    description: "create tag"
+    value: ${{ steps.create-tag.outputs.tag }}
+
+runs:
+  using: composite
+  steps:
+    # create tag https://github.com/ruby/ruby-dev-builder/blob/master/.github/workflows/build.yml#L20
+    - name: Create tag
+      shell: bash
+      id: create-tag
+      run: |
+        if [[ "${{ github.event_name }}" == "schedule" ]]; then
+          tag="v$(date +%Y%m%d)"
+        else
+          tag="$(basename "${{ github.ref }}")"
+        fi
+        echo "::set-output name=tag::$tag"

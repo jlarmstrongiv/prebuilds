@@ -1,0 +1,29 @@
+name: get-architecture
+description: get architecture name from platform name
+
+inputs:
+  PLATFORM:
+    required: true
+    description: docker platform
+
+outputs:
+  architecture:
+    description: "architecture"
+    value: ${{ steps.get-architecture.outputs.architecture }}
+
+runs:
+  using: composite
+  steps:
+    - name: get os
+      shell: bash
+      id: get-architecture
+      run: |
+        if [[ "${{ inputs.PLATFORM }}" == "linux/amd64" ]]; then
+            architecture="x86_64"
+        elif [[ "${{ inputs.PLATFORM }}" == "linux/arm64" ]]; then
+            architecture="arm64"
+        else
+            echo "[get-architecture/action.yml]: unsupported platform \"${{ inputs.PLATFORM }}\"" >&2
+            exit 1
+        fi
+        echo "::set-output name=architecture::$architecture"
