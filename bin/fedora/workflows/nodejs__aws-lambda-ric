@@ -48,9 +48,7 @@ tar -czf "${RIC_FILENAME:-}" "./aws-lambda-ric"
 tar -czf "${VERCEL_NCC_RIC_FILENAME:-}" "./vercel-ncc-aws-lambda-ric"
 
 # move to output
-ls
 mv "$ric_filename" "$vercel_ncc_ric_filename" "/var/task"
-ls "/var/task"
 
 # cleanup
 rm -rf "$tmp_dir"
