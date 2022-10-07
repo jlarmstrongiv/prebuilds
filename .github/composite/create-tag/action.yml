@@ -20,3 +20,4 @@ runs:
           tag="$(basename "${{ github.ref }}")"
         fi
         echo "::set-output name=tag::$tag"
+        echo "$tag"

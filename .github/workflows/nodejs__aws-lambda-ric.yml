@@ -112,8 +112,8 @@ jobs:
           RIC_FILENAME: ${{ steps.get-filenames.outputs.ric_filename }}
           VERCEL_NCC_RIC_FILENAME: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
         run: |
-          echo "${{ steps.get-filenames.outputs.ric_filename }}"
-          echo "${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}"
+          export RIC_FILENAME="${{ steps.get-filenames.outputs.ric_filename }}"
+          export VERCEL_NCC_RIC_FILENAME="${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}"
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
           docker run --platform "$PLATFORM" --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm "$IMAGE" -c "/var/task/bin/$OS/workflows/${{ github.workflow }}"
           ls
