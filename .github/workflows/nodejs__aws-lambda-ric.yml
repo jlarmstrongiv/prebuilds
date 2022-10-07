@@ -21,7 +21,7 @@ jobs:
         timeout-minutes: 5
         uses: actions/checkout@v3
 
-      - id: create-tag
+      - id: create_tag
         name: create tag
         timeout-minutes: 5
         uses: ./.github/composite/create-tag
