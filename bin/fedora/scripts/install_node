@@ -10,3 +10,5 @@ nodejs_version="$(asdf latest nodejs "$nodejs_major_version")"
 
 asdf install nodejs "$nodejs_version"
 asdf global nodejs "$nodejs_version"
+node --version
+npm --version

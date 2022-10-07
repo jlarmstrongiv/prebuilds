@@ -13,3 +13,5 @@ python_version="$(asdf latest python "$python_major_version")"
 
 asdf install python "$python_version"
 asdf global python "$python_version"
+python --version
+pip --version
