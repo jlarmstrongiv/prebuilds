@@ -8,41 +8,10 @@ on:
     - cron: "0 1 * * *"
 
 jobs:
-  should-run:
-    concurrency:
-      cancel-in-progress: true
-      group: ${{ github.ref }}__${{ github.workflow }}__${{ github.job }}
-    outputs:
-      has-changed: ${{ toJSON(
-        steps.changes.outputs.workflow == 'true' ||
-        steps.changes.outputs.composite == 'true') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout repository
-        timeout-minutes: 5
-        uses: actions/checkout@v3
-
-      - id: changes
-        name: workflow file has changed
-        timeout-minutes: 15
-        uses: dorny/paths-filter@v2
-        with:
-          filters: |
-            workflow:
-              - '.github/workflows/${{ github.job }}.yml'
-              - 'bin/*/workflows/${{ github.job }}.yml'
-            composite:
-              - '.github/composite/**'
-              - 'bin/*/scripts/**'
-    timeout-minutes: 15
-
   setup:
     concurrency:
       cancel-in-progress: true
       group: ${{ github.ref }}__${{ github.workflow }}__${{ github.job }}
-    if: ${{ github.event_name == 'schedule' || needs.should-run.outputs.has-changed == 'true' }}
-    needs:
-      - should-run
     outputs:
       release_id: ${{ steps.create_release.outputs.id }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
