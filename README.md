@@ -8,8 +8,8 @@ This repository contains GitHub Actions and Releases to prebuild software for in
 
 Helpers for code quality are located in `bin/helpers`
 
-- brew install shellcheck
-- brew install focusaurus/homebrew-shfmt/shfmt
+- `brew install shellcheck`
+- `brew install focusaurus/homebrew-shfmt/shfmt`
 
 ### Containers
 
@@ -39,21 +39,3 @@ Helpers for code quality are located in `bin/helpers`
 
 - interactive `docker run --platform <platform> --entrypoint /bin/bash -it -v "$(pwd):/var/task" --rm <image>`
 - command `docker run --platform <platform> --entrypoint "/bin/bash" -v "$(pwd):/var/task" --rm <image> -c "<bash-commands>"`
-
-# Builds
-
-## nodejs aws-lambda-ric
-
-Prebuilt and minified for:
-
-- all containers
-- all platforms
-- all nodejs major versions
-
-## python awslambdaric
-
-Prebuilt for:
-
-- all containers
-- all platforms
-- all python major versions
