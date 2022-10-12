@@ -1,18 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# E: Unable to locate package zlib-devel
-# E: Unable to locate package bzip2-devel
-# E: Unable to locate package readline-devel
-# E: Unable to locate package sqlite-devel
-# E: Unable to locate package openssl-devel
-# E: Unable to locate package tk-devel
-# E: Unable to locate package libffi-devel
-# E: Unable to locate package xz-devel
-
-
 # python plugin dependencies https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-apt-get install -y findutils patch gcc zlib1g-dev libbz2-dev libreadline-dev sqlite libsqlite3-dev libssl-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+apt-get install -y findutils make patch gcc zlib1g-dev libbz2-dev libreadline-dev sqlite libsqlite3-dev libssl-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
 asdf plugin-add python
 
