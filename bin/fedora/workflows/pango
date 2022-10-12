@@ -12,6 +12,7 @@ yum install -y tar gzip findutils gcc gcc-c++ python python3-pip cmake git libth
 
 # fix amazon's pkg-config
 ln -s /bin/x86_64-amazon-linux-gnu-pkg-config /bin/x86_64-redhat-linux-gnu-pkg-config
+ln -s /bin/aarch64-amazon-linux-gnu-pkg-config /bin/aarch64-redhat-linux-gnu-pkg-config
 
 pip3 install meson ninja
 
