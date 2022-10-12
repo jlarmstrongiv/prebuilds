@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# setup os
+os_script_path="$(dirname "$(realpath -s "$0")")/.."
+"$os_script_path/scripts/setup"
+
 install_location="/usr/local/lib/pango"
 
 # install dependencies
-yum install -y gcc gcc-c++ python python3-pip cmake git libthai-devel libicu-devel graphite2-devel
+yum install -y findutils gcc gcc-c++ python python3-pip cmake git libthai-devel libicu-devel graphite2-devel
 
 # fix amazon's pkg-config
 ln -s /bin/x86_64-amazon-linux-gnu-pkg-config /bin/x86_64-redhat-linux-gnu-pkg-config
