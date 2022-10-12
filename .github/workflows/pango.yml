@@ -91,13 +91,13 @@ jobs:
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
           docker run \
+            --security-opt seccomp=unconfined \
             --platform "$PLATFORM" \
             --env OS="$OS" \
             --env FILENAME="$FILENAME" \
             --entrypoint "/bin/bash" \
             --volume "$(pwd):/var/task" \
             --rm "$IMAGE" \
-            --security-opt seccomp=unconfined \
             -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}"
 
       - name: debug
