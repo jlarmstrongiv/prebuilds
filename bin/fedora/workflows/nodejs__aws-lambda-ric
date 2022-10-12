@@ -30,25 +30,21 @@ yum install -y g++ make cmake unzip tar gzip autoconf automake libtool
 
 # install aws-lambda-ric
 # permissions https://github.com/lovell/sharp/blob/main/.github/workflows/ci.yml#L89
-npm install --global --build-from-source --unsafe-perm aws-lambda-ric
+# custom install directory https://stackoverflow.com/a/14469516
+install_location="/usr/local/ric/nodejs"
+mkdir -p "$install_location"
+npm install --prefix="$install_location" --global --build-from-source --unsafe-perm aws-lambda-ric
 
-# use tmp directory
-tmp_dir="$(mktemp -d)"
-cd "$tmp_dir" || exit 1
-
-# move module to tmp dir
-mv "$(npm root --global)/aws-lambda-ric" "$tmp_dir"
+# cleanup nested folders due to https://docs.npmjs.com/cli/v8/commands/npm-prefix
+mv "$install_location/lib/node_modules/aws-lambda-ric" "/tmp"
+rm -rf "$install_location"
+mkdir -p "$install_location"
+mv "/tmp/aws-lambda-ric" "$install_location"
 
 # create optimized and bundled version
 # non-interactive https://stackoverflow.com/a/69006263
-npm_config_yes=true npx @vercel/ncc build "$tmp_dir/aws-lambda-ric/bin/index.js" -o "$tmp_dir/vercel-ncc-aws-lambda-ric"
+npm_config_yes=true npx @vercel/ncc build "$install_location/aws-lambda-ric/bin/index.js" -o "$install_location/vercel-ncc-aws-lambda-ric"
 
 # compress to .tar.gz
-tar -czf "${RIC_FILENAME:-}" "./aws-lambda-ric"
-tar -czf "${VERCEL_NCC_RIC_FILENAME:-}" "./vercel-ncc-aws-lambda-ric"
-
-# move to output
-mv "${RIC_FILENAME:-}" "${VERCEL_NCC_RIC_FILENAME:-}" "/var/task"
-
-# cleanup
-rm -rf "$tmp_dir"
+tar -czf "/var/task/${RIC_FILENAME:-}" "$install_location/aws-lambda-ric"
+tar -czf "/var/task/${VERCEL_NCC_RIC_FILENAME:-}" "$install_location/vercel-ncc-aws-lambda-ric"

@@ -12,10 +12,130 @@ concurrency:
   group: ${{ github.ref }}__${{ github.workflow }}
 
 jobs:
-  should-run:
+  setup:
+    outputs:
+      tag: ${{ steps.create_tag.outputs.tag }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
         timeout-minutes: 5
         uses: actions/checkout@v3
-    timeout-minutes: 15
+
+      - id: create_tag
+        name: create tag
+        timeout-minutes: 5
+        uses: ./.github/composite/create-tag
+
+  build-and-release:
+    needs:
+      - setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        image:
+          - public.ecr.aws/amazonlinux/amazonlinux:2022
+          # - public.ecr.aws/lts/ubuntu:jammy
+        python:
+          - 3.7
+          # - 3.8
+          # - 3.9
+          # - 3.10
+          # - 3.11
+        platform:
+          - linux/amd64
+          # - linux/arm64
+    steps:
+      - name: checkout repository
+        timeout-minutes: 5
+        uses: actions/checkout@v3
+
+      - name: setup docker
+        timeout-minutes: 15
+        uses: ./.github/composite/setup-docker
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - id: get-os
+        name: get os
+        timeout-minutes: 5
+        uses: ./.github/composite/get-os
+        with:
+          IMAGE: ${{ matrix.image }}
+
+      - id: get-architecture
+        name: get architecture
+        timeout-minutes: 5
+        uses: ./.github/composite/get-architecture
+        with:
+          PLATFORM: ${{ matrix.platform }}
+
+      - id: get-filenames
+        name: get filenames
+        timeout-minutes: 5
+        env:
+          OS: ${{ steps.get-os.outputs.os }}
+          ARCHITECTURE: ${{ steps.get-architecture.outputs.architecture }}
+          PYTHON_MAJOR_VERSION: ${{ matrix.python }}
+        run: |
+          filename="${OS:-}__${ARCHITECTURE:-}__python-${PYTHON_MAJOR_VERSION:-}__aws-lambda-ric.tar.gz"
+          echo "::set-output name=filename::$filename"
+          echo "$filename"
+
+      - name: compile
+        shell: bash
+        env:
+          IMAGE: ${{ matrix.image }}
+          PYTHON_MAJOR_VERSION: ${{ matrix.python }}
+          OS: ${{ steps.get-os.outputs.os }}
+          PLATFORM: ${{ matrix.platform }}
+          FILENAME: ${{ steps.get-filenames.outputs.filename }}
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+          docker run \
+            --platform "$PLATFORM" \
+            --env PYTHON_MAJOR_VERSION="$PYTHON_MAJOR_VERSION" \
+            --env OS="$OS" \
+            --env FILENAME="$FILENAME" \
+            --entrypoint "/bin/bash" \
+            --volume "$(pwd):/var/task" \
+            --rm "$IMAGE" \
+            -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}"
+
+      - name: debug
+        run: |
+          echo ${{ needs.setup.outputs.tag }}
+
+      - uses: ncipollo/release-action@v1
+        timeout-minutes: 15
+        with:
+          allowUpdates: true
+          artifacts: "${{ steps.get-filenames.outputs.filename }}"
+          artifactContentType: application/gzip
+          artifactErrorsFailBuild: true
+          commit: ${{ github.sha }}
+          replacesArtifacts: true
+          tag: ${{ needs.setup.outputs.tag }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+    # max timeout of 6 hours (60 minutes * 6)
+    timeout-minutes: 360
+
+  prune-release:
+    needs:
+      - setup
+      - build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: eregon/keep-last-n-releases@v1
+        timeout-minutes: 30
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          n: 60
+          remove_tags_without_release: true

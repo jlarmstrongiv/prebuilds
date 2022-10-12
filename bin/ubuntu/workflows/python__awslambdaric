@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+#########
+# setup #
+#########
+
+os_script_path="$(dirname "$(realpath -s "$0")")/.."
+
+# setup os
+"$os_script_path/scripts/setup"
+
+# install asdf
+"$os_script_path/scripts/install_asdf"
+# finish asdf installation
+set +u
+# shellcheck source=/dev/null
+source /etc/bashrc
+set -u
+
+# install python
+"$os_script_path/scripts/install_python"
+
+##########
+# script #
+##########
+
+# install awslambdaric dependencies
+apt-get install -y g++ make cmake unzip libtool
+
+python="python${PYTHON_MAJOR_VERSION:-}"
+
+# upgrade pip
+"$python" -m ensurepip --upgrade
+
+# install awslambdaric
+# custom install directory https://stackoverflow.com/a/19404371
+install_location="/usr/local/ric/python"
+mkdir -p "$install_location"
+"$python" -m pip install --target "$install_location" awslambdaric
+
+# compress to .tar.gz
+tar -czf "/var/task/${FILENAME:-}" "$install_location"
