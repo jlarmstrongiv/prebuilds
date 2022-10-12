@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # python plugin dependencies https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-apt-get install -y findutils gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
+apt-get install -y findutils patch gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
 
 asdf plugin-add python
 
