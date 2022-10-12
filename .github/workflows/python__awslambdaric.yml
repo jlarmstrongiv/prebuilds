@@ -83,7 +83,7 @@ jobs:
           ARCHITECTURE: ${{ steps.get-architecture.outputs.architecture }}
           PYTHON_MAJOR_VERSION: ${{ matrix.python }}
         run: |
-          filename="${OS:-}__${ARCHITECTURE:-}__python-${PYTHON_MAJOR_VERSION:-}__aws-lambda-ric.tar.gz"
+          filename="${OS:-}__${ARCHITECTURE:-}__python-${PYTHON_MAJOR_VERSION:-}__awslambdaric.tar.gz"
           echo "::set-output name=filename::$filename"
           echo "$filename"
 

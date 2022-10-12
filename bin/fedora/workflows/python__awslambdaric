@@ -40,4 +40,4 @@ mkdir -p "$install_location"
 "$python" -m pip install --target "$install_location" awslambdaric
 
 # compress to .tar.gz
-tar -czf "/var/task/${FILENAME:-}" "$install_location"
+tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
