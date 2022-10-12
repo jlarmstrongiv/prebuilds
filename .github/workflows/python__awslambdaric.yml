@@ -34,17 +34,17 @@ jobs:
       fail-fast: true
       matrix:
         image:
-          - public.ecr.aws/amazonlinux/amazonlinux:2022
-          - public.ecr.aws/lts/ubuntu:jammy
+          - "public.ecr.aws/amazonlinux/amazonlinux:2022"
+          - "public.ecr.aws/lts/ubuntu:jammy"
         python:
-          - 3.7
-          - 3.8
-          - 3.9
-          - 3.10
-          - 3.11
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
         platform:
-          - linux/amd64
-          # - linux/arm64
+          - "linux/amd64"
+          # - "linux/arm64"
     steps:
       - name: checkout repository
         timeout-minutes: 5
