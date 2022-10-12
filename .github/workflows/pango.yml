@@ -38,7 +38,7 @@ jobs:
           - "public.ecr.aws/lts/ubuntu:jammy"
         platform:
           - "linux/amd64"
-          # - "linux/arm64"
+          - "linux/arm64"
     steps:
       - name: checkout repository
         timeout-minutes: 5
