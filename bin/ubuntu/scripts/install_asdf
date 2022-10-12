@@ -5,8 +5,11 @@ set -euo pipefail
 apt-get install -y git tar gzip curl
 
 # download asdf https://asdf-vm.com/guide/getting-started.html#_2-download-asdf
+echo "01 installed dependencies"
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
+echo "02 cloning"
 
 # install asdf
 # shellcheck disable=SC2016
 sed -i -e '1 i . $HOME/.asdf/asdf.sh' -e '1 i . $HOME/.asdf/completions/asdf.bash' ~/.bashrc
+echo "03 sed edits"
