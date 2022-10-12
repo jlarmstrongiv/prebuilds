@@ -7,6 +7,10 @@ on:
     # rebuild every day at 1am UTC for security and updates
     - cron: "0 1 * * *"
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.ref }}__${{ github.workflow }}
+
 jobs:
   should-run:
     concurrency:
