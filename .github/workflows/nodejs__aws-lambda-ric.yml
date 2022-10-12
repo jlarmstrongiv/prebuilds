@@ -111,6 +111,10 @@ jobs:
             --rm "$IMAGE" \
             -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}"
 
+      - name: debug
+        run: |
+          echo ${{ needs.setup.outputs.release_id }}
+
       - uses: ncipollo/release-action@v1
         timeout-minutes: 15
         with:
