@@ -27,20 +27,7 @@ jobs:
         timeout-minutes: 5
         uses: ./.github/composite/create-tag
 
-      - name: create draft release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        timeout-minutes: 5
-        with:
-          tag_name: ${{ steps.create_tag.outputs.tag }}
-          release_name: ${{ steps.create_tag.outputs.tag }}
-          draft: true
-          prerelease: false
-    timeout-minutes: 15
-
-  build-and-upload:
+  build-and-release:
     needs:
       - setup
     runs-on: ubuntu-latest
@@ -49,14 +36,14 @@ jobs:
       matrix:
         image:
           - public.ecr.aws/amazonlinux/amazonlinux:2022
-          - public.ecr.aws/lts/ubuntu:jammy
+          # - public.ecr.aws/lts/ubuntu:jammy
         nodejs:
           - 14
-          - 16
-          - 18
+          # - 16
+          # - 18
         platform:
           - linux/amd64
-          - linux/arm64
+          # - linux/arm64
     steps:
       - name: checkout repository
         timeout-minutes: 5
@@ -124,43 +111,27 @@ jobs:
             --rm "$IMAGE" \
             -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}"
 
-      - name: Upload ric
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ncipollo/release-action@v1
         timeout-minutes: 15
         with:
-          upload_url: ${{ needs.setup.outputs.upload_url }}
-          asset_path: ${{ steps.get-filenames.outputs.ric_filename }}
-          asset_name: ${{ steps.get-filenames.outputs.ric_filename }}
-          asset_content_type: application/gzip
-
-      - name: Upload vercel_ncc_ric
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        timeout-minutes: 15
-        with:
-          upload_url: ${{ needs.setup.outputs.upload_url }}
-          asset_path: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
-          asset_name: ${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}
-          asset_content_type: application/gzip
+          allowUpdates: true
+          artifacts: "${{ steps.get-filenames.outputs.ric_filename }},${{ steps.get-filenames.outputs.vercel_ncc_ric_filename }}"
+          artifactContentType: application/gzip
+          artifactErrorsFailBuild: true
+          commit: ${{ github.sha }}
+          replacesArtifacts: true
+          tag: ${{ needs.setup.outputs.release_id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
     # max timeout of 6 hours (60 minutes * 6)
     timeout-minutes: 360
 
-  publish-release:
+  prune-release:
     needs:
       - setup
-      - build-and-upload
+      - build-and-release
     runs-on: ubuntu-latest
     steps:
-      - uses: eregon/publish-release@v1
-        timeout-minutes: 30
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup.outputs.release_id }}
       - uses: eregon/keep-last-n-releases@v1
         timeout-minutes: 30
         env:
