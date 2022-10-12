@@ -31,7 +31,7 @@ jobs:
       - setup
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         image:
           - public.ecr.aws/amazonlinux/amazonlinux:2022
@@ -98,6 +98,7 @@ jobs:
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
           docker run \
+            --security-opt seccomp=unconfined \
             --platform "$PLATFORM" \
             --env PYTHON_MAJOR_VERSION="$PYTHON_MAJOR_VERSION" \
             --env OS="$OS" \
