@@ -1,2 +1,59 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+install_location="/usr/local/lib/pango"
+
+# install dependencies
+yum install -y gcc gcc-c++ python python3-pip cmake git libthai-devel libicu-devel graphite2-devel
+
+# fix amazon's pkg-config
+ln -s /bin/x86_64-amazon-linux-gnu-pkg-config /bin/x86_64-redhat-linux-gnu-pkg-config
+
+pip3 install meson ninja
+
+tmp_dir="$(mktemp -d)"
+cd "$tmp_dir" || exit 1
+
+git clone https://gitlab.gnome.org/GNOME/pango.git --depth 1 --single-branch
+cd pango
+
+# the freetype2 that pango uses fails harfbuzz compilation because FT_Get_Transform is missing so update it
+sed -i -e 's,url=.*,url=https://gitlab.freedesktop.org/freetype/freetype.git,' -e 's,revision=meson,revision=master,' subprojects/freetype2.wrap
+
+# the next command will fail but we need it to initialize the subprojects
+# NOTE: cannot use meson subprojects download since we need subprojects of subprojects
+meson "$install_location" --buildtype=release --force-fallback-for=cairo,freetype2,fribidi,glib,harfbuzz || echo "failed but expected, continuing"
+
+# enable graphite2 and experimental apis
+sed -i -e "/graphite2/{s/'disabled'/'enabled'/}" -e "/experimental_api/{s/false/true/}" subprojects/harfbuzz/meson_options.txt
+
+# freetype2 should not include harfbuzz or it causes a circular dependency (harfbuzz -> freetype)
+sed -i "/option('harfbuzz',/{ N; N; s/auto/disabled/; }" subprojects/freetype2/meson_options.txt
+
+# still fails due to fontconfig but needed to resume initializing subprojects
+meson "$install_location" --buildtype=release --force-fallback-for=cairo,freetype2,fribidi,glib,harfbuzz || echo "failed but expected, continuing"
+
+# fontconfig failed because gperf needs to be configured and compiled first
+meson "$install_location/subprojects/gperf/" subprojects/gperf --buildtype=release
+meson compile -C "$install_location/subprojects/gperf"
+
+# now configuration works
+meson "$install_location" --buildtype=release --force-fallback-for=cairo,freetype2,fribidi,glib,harfbuzz
+
+# compile
+meson compile -C "$install_location"
+
+# verify
+"$install_location/utils/pango-view" --help
+ldd "$install_location/utils/pango-view"
+# ldd should show that many libs (such as libcairo) all point to your build directory
+
+# cleanup
+rm -rf "$tmp_dir"
+find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
+find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
+find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
+
+# compress to .tar.gz
+# tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
+tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
