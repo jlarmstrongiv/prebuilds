@@ -40,4 +40,5 @@ mkdir -p "$install_location"
 "$python" -m pip install --target "$install_location" awslambdaric
 
 # compress to .tar.gz
+# tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
 tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .

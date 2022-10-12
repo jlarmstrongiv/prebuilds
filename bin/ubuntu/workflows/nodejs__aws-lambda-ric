@@ -46,5 +46,6 @@ mv "/tmp/aws-lambda-ric" "$install_location"
 npm_config_yes=true npx @vercel/ncc build "$install_location/aws-lambda-ric/bin/index.js" -o "$install_location/vercel-ncc-aws-lambda-ric"
 
 # compress to .tar.gz
+# tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
 tar -czf "/var/task/${RIC_FILENAME:-}" -C "$install_location/aws-lambda-ric" .
 tar -czf "/var/task/${VERCEL_NCC_RIC_FILENAME:-}" -C "$install_location/vercel-ncc-aws-lambda-ric" .
