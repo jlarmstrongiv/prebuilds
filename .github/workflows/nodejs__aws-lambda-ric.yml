@@ -14,8 +14,7 @@ concurrency:
 jobs:
   setup:
     outputs:
-      release_id: ${{ steps.create_release.outputs.id }}
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      tag: ${{ steps.create_tag.outputs.tag }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
@@ -113,7 +112,7 @@ jobs:
 
       - name: debug
         run: |
-          echo ${{ needs.setup.outputs.release_id }}
+          echo ${{ needs.setup.outputs.tag }}
 
       - uses: ncipollo/release-action@v1
         timeout-minutes: 15
@@ -124,7 +123,7 @@ jobs:
           artifactErrorsFailBuild: true
           commit: ${{ github.sha }}
           replacesArtifacts: true
-          tag: ${{ needs.setup.outputs.release_id }}
+          tag: ${{ needs.setup.outputs.tag }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
     # max timeout of 6 hours (60 minutes * 6)
