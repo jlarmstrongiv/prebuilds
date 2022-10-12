@@ -13,12 +13,10 @@ os_script_path="$(dirname "$(realpath -s "$0")")/.."
 # install asdf
 "$os_script_path/scripts/install_asdf"
 # finish asdf installation
-echo "INSTALLED SUCCESSFULLY"
 set +u
 # shellcheck source=/dev/null
 source ~/.bashrc
 set -u
-echo "SOURCED SUCCESSFULLY"
 
 # install python
 "$os_script_path/scripts/install_python"
