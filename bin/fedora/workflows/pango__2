@@ -28,6 +28,16 @@ mkdir -p "$install_location"
 mkdir -p "$tmp_dir"
 tar -xzf "/var/task/${FILENAME:-}" -C "$install_location"
 tar -xzf "/var/task/${FILENAME_REPOSITORY:-}" -C "$tmp_dir"
+
+echo "$(pwd)"
+ls -l
+echo "$install_location"
+ls -l "$install_location"
+echo "$tmp_dir"
+ls -l "$tmp_dir"
+echo "$tmp_dir/pango"
+ls -l "$tmp_dir/pango"
+
 rm -rf "/var/task/${FILENAME:-}"
 rm -rf "/var/task/${FILENAME_REPOSITORY:-}"
 cd pango

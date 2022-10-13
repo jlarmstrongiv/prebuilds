@@ -108,7 +108,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         timeout-minutes: 15
         with:
-          name: pango-build-artifacts
+          name: ${{ steps.get-os.outputs.os }}__${{ steps.get-architecture.outputs.architecture }}__pango-build-artifacts
           path: "*.tar.gz"
           if-no-files-found: error
           retention-days: 1
@@ -177,7 +177,7 @@ jobs:
         id: download-filename
         timeout-minutes: 15
         with:
-          name: pango-build-artifacts
+          name: ${{ steps.get-os.outputs.os }}__${{ steps.get-architecture.outputs.architecture }}__pango-build-artifacts
           path: ./
 
       - name: compile-2
@@ -205,7 +205,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         timeout-minutes: 15
         with:
-          name: pango-build-artifacts
+          name: ${{ steps.get-os.outputs.os }}__${{ steps.get-architecture.outputs.architecture }}__pango-build-artifacts
           path: "*.tar.gz"
           if-no-files-found: error
           retention-days: 1
@@ -275,7 +275,7 @@ jobs:
         id: download-filename
         timeout-minutes: 15
         with:
-          name: pango-build-artifacts
+          name: ${{ steps.get-os.outputs.os }}__${{ steps.get-architecture.outputs.architecture }}__pango-build-artifacts
           path: ./
 
       - name: compile-3
