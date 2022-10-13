@@ -23,6 +23,8 @@ pip3 install meson ninja
 tmp_dir="$(mktemp -d)"
 cd "$tmp_dir" || exit 1
 
+ls -l /var/task
+
 # decompress artifacts
 mkdir -p "$install_location"
 mkdir -p "$tmp_dir/pango"
@@ -31,6 +33,9 @@ tar -xzf "/var/task/${FILENAME_REPOSITORY:-}" -C "$tmp_dir/pango"
 rm -rf "/var/task/${FILENAME:-}"
 rm -rf "/var/task/${FILENAME_REPOSITORY:-}"
 cd pango
+
+ls -l
+ls -l "$install_location"
 
 # compile
 meson compile -C "$install_location"
