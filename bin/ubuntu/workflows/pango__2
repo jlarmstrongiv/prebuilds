@@ -20,32 +20,33 @@ pip3 install meson ninja
 # Part 2 #
 ##########
 
-tmp_dir="$(mktemp -d)"
+tmp_dir="/tmp"
 cd "$tmp_dir" || exit 1
 
 # decompress artifacts
 mkdir -p "$install_location"
-mkdir -p "$tmp_dir/pango"
+mkdir -p "$tmp_dir"
 tar -xzf "/var/task/${FILENAME:-}" -C "$install_location"
-tar -xzf "/var/task/${FILENAME_REPOSITORY:-}" -C "$tmp_dir/pango"
+tar -xzf "/var/task/${FILENAME_REPOSITORY:-}" -C "$tmp_dir"
 rm -rf "/var/task/${FILENAME:-}"
 rm -rf "/var/task/${FILENAME_REPOSITORY:-}"
 cd pango
 
 # compile
-meson compile -C "$install_location"
 
-# verify
-"$install_location/utils/pango-view" --help
-ldd "$install_location/utils/pango-view"
-# ldd should show that many libs (such as libcairo) all point to your build directory
+if timeout 5h meson compile -C "$install_location" || [[ -n "${DONE:-}" ]]; then
+    # verify
+    "$install_location/utils/pango-view" --help
+    ldd "$install_location/utils/pango-view"
+    # ldd should show that many libs (such as libcairo) all point to your build directory
 
-# cleanup
-rm -rf "$tmp_dir"
-find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
-find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
-find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
+    # cleanup
+    find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
+    find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
+    find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
+fi
 
 # compress to .tar.gz
 # tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
 tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
+tar -czf "/var/task/${FILENAME_REPOSITORY:-}" -C "../" .

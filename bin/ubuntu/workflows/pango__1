@@ -20,7 +20,7 @@ pip3 install meson ninja
 # Part 1 #
 ##########
 
-tmp_dir="$(mktemp -d)"
+tmp_dir="/tmp"
 cd "$tmp_dir" || exit 1
 
 git clone https://gitlab.gnome.org/GNOME/pango.git --depth 1 --single-branch
@@ -52,4 +52,4 @@ meson "$install_location" --buildtype=release --force-fallback-for=cairo,freetyp
 # compress to .tar.gz
 # tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
 tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
-tar -czf "/var/task/${FILENAME_REPOSITORY:-}" -C "../pango" .
+tar -czf "/var/task/${FILENAME_REPOSITORY:-}" -C "../" .
