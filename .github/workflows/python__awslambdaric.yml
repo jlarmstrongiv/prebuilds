@@ -124,17 +124,3 @@ jobs:
 
     # max timeout of 6 hours (60 minutes * 6)
     timeout-minutes: 360
-
-  prune-release:
-    needs:
-      - setup
-      - build-and-release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: eregon/keep-last-n-releases@v1
-        timeout-minutes: 30
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          n: 60
-          remove_tags_without_release: true

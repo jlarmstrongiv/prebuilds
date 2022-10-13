@@ -49,7 +49,7 @@ jobs:
         uses: ./.github/composite/setup-docker
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -315,17 +315,3 @@ jobs:
 
     # max timeout of 6 hours (60 minutes * 6)
     timeout-minutes: 360
-
-  cleanup:
-    needs:
-      - build-3
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - uses: eregon/keep-last-n-releases@v1
-        timeout-minutes: 30
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          n: 60
-          remove_tags_without_release: true
