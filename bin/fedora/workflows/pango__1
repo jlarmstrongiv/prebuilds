@@ -52,4 +52,4 @@ meson "$install_location" --buildtype=release --force-fallback-for=cairo,freetyp
 # compress to .tar.gz
 # tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
 tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
-tar -czf "/var/task/${FILENAME_REPOSITORY:-}" -C "../pango" .
+tar -czf "/var/task/${FILENAME_REPOSITORY:-}" -C "../" .
