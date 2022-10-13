@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# setup os
+os_script_path="$(dirname "$(realpath -s "$0")")/.."
+"$os_script_path/scripts/setup"
+
+install_location="/usr/local/lib/pango"
+
+# install dependencies
+apt-get install -y tar gzip findutils g++ python3 python3-pip cmake git libthai-dev libicu-dev libgraphite2-dev
+
+# fix amazon's pkg-config
+ln -s /bin/x86_64-amazon-linux-gnu-pkg-config /bin/x86_64-redhat-linux-gnu-pkg-config
+ln -s /bin/aarch64-amazon-linux-gnu-pkg-config /bin/aarch64-redhat-linux-gnu-pkg-config
+
+pip3 install meson ninja
+
+##########
+# Part 2 #
+##########
+
+tmp_dir="$(mktemp -d)"
+cd "$tmp_dir" || exit 1
+
+# decompress artifacts
+mkdir -p "$install_location"
+mkdir -p "$tmp_dir/pango"
+tar -xzf "/var/task/${FILENAME:-}" -C "$install_location"
+tar -xzf "/var/task/${FILENAME_REPOSITORY:-}" -C "$tmp_dir/pango"
+cd pango
+
+# compile
+meson compile -C "$install_location"
+
+# verify
+"$install_location/utils/pango-view" --help
+ldd "$install_location/utils/pango-view"
+# ldd should show that many libs (such as libcairo) all point to your build directory
+
+# cleanup
+rm -rf "$tmp_dir"
+find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
+find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
+find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
+
+# compress to .tar.gz
+# tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
+tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
