@@ -77,7 +77,7 @@ jobs:
           ARCHITECTURE: ${{ steps.get-architecture.outputs.architecture }}
         run: |
           filename="${OS:-}__${ARCHITECTURE:-}__pango.tar.gz"
-          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango__repository.tar.gz"
+          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango-repository.tar.gz"
           echo "::set-output name=filename::$filename"
           echo "::set-output name=filename_repository::$filename_repository"
           echo "$filename"
@@ -167,7 +167,7 @@ jobs:
           ARCHITECTURE: ${{ steps.get-architecture.outputs.architecture }}
         run: |
           filename="${OS:-}__${ARCHITECTURE:-}__pango.tar.gz"
-          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango__repository.tar.gz"
+          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango-repository.tar.gz"
           echo "::set-output name=filename::$filename"
           echo "::set-output name=filename_repository::$filename_repository"
           echo "$filename"
@@ -265,7 +265,7 @@ jobs:
           ARCHITECTURE: ${{ steps.get-architecture.outputs.architecture }}
         run: |
           filename="${OS:-}__${ARCHITECTURE:-}__pango.tar.gz"
-          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango__repository.tar.gz"
+          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango-repository.tar.gz"
           echo "::set-output name=filename::$filename"
           echo "::set-output name=filename_repository::$filename_repository"
           echo "$filename"
