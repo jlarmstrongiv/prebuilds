@@ -209,7 +209,7 @@ jobs:
             --entrypoint "/bin/bash" \
             --volume "$(pwd):/var/task" \
             --rm "$IMAGE" \
-            -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}__1"
+            -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}__2"
 
       - uses: ncipollo/release-action@v1
         timeout-minutes: 15
