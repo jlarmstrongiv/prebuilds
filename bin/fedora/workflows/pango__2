@@ -32,27 +32,22 @@ rm -rf "/var/task/${FILENAME:-}"
 rm -rf "/var/task/${FILENAME_REPOSITORY:-}"
 cd pango
 
-echo "$(pwd)"
-ls -l
-echo "$install_location"
-ls -l "$install_location"
-echo "$tmp_dir"
-ls -l "$tmp_dir"
-
 # compile
-meson compile -C "$install_location"
 
-# verify
-"$install_location/utils/pango-view" --help
-ldd "$install_location/utils/pango-view"
-# ldd should show that many libs (such as libcairo) all point to your build directory
+if timeout 60s meson compile -C "$install_location" || [[ -z "${DONE:-}" ]]; then
+    # verify
+    "$install_location/utils/pango-view" --help
+    ldd "$install_location/utils/pango-view"
+    # ldd should show that many libs (such as libcairo) all point to your build directory
 
-# cleanup
-rm -rf "$tmp_dir"
-find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
-find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
-find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
+    # cleanup
+    rm -rf "$tmp_dir"
+    find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
+    find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
+    find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
+fi
 
 # compress to .tar.gz
 # tar -C to avoid absolute paths https://stackoverflow.com/a/18681628
 tar -czf "/var/task/${FILENAME:-}" -C "$install_location" .
+tar -czf "/var/task/${FILENAME_REPOSITORY:-}" -C "../" .
