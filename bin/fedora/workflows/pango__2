@@ -20,7 +20,7 @@ pip3 install meson ninja
 # Part 2 #
 ##########
 
-tmp_dir="$(mktemp -d)"
+tmp_dir="/tmp"
 cd "$tmp_dir" || exit 1
 
 # decompress artifacts
