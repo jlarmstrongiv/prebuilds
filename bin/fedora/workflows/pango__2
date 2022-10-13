@@ -28,26 +28,9 @@ mkdir -p "$install_location"
 mkdir -p "$tmp_dir"
 tar -xzf "/var/task/${FILENAME:-}" -C "$install_location"
 tar -xzf "/var/task/${FILENAME_REPOSITORY:-}" -C "$tmp_dir"
-
-echo "$(pwd)"
-ls -l
-echo "$install_location"
-ls -l "$install_location"
-echo "$tmp_dir"
-ls -l "$tmp_dir"
-echo "$tmp_dir/pango"
-ls -l "$tmp_dir/pango"
-
 rm -rf "/var/task/${FILENAME:-}"
 rm -rf "/var/task/${FILENAME_REPOSITORY:-}"
 cd pango
-
-echo "$(pwd)"
-ls -l
-echo "$install_location"
-ls -l "$install_location"
-echo "$tmp_dir"
-ls -l "$tmp_dir"
 
 # compile
 
@@ -58,7 +41,6 @@ if timeout 5h meson compile -C "$install_location" || [[ -n "${DONE:-}" ]]; then
     # ldd should show that many libs (such as libcairo) all point to your build directory
 
     # cleanup
-    rm -rf "$tmp_dir"
     find "$install_location" -name '*test*' -type d -prune -exec rm -rf {} \;
     find "$install_location" -name '*doc*' -type d -prune -exec rm -rf {} \;
     find "$install_location" -name '*example*' -type d -prune -exec rm -rf {} \;
