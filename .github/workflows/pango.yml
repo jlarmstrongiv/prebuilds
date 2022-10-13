@@ -182,12 +182,12 @@ jobs:
         id: download-filename
         with:
           name: ${{ steps.get-filenames.outputs.filename_repository }}
-          path: ${{ steps.get-filenames.outputs.filename_repository }}
+          path: ./
       - uses: actions/download-artifact@v3
         id: download-filename_repository
         with:
           name: ${{ steps.get-filenames.outputs.filename }}
-          path: ${{ steps.get-filenames.outputs.filename }}
+          path: ./
 
       - name: compile-2
         shell: bash
