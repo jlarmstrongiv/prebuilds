@@ -34,7 +34,7 @@ cd pango
 
 # compile
 
-if timeout 5h meson compile -C "$install_location" || [[ -n "${DONE:-}" ]]; then
+if timeout 5.5h meson compile -C "$install_location" || [[ -n "${DONE:-}" ]]; then
     # verify
     "$install_location/utils/pango-view" --help
     ldd "$install_location/utils/pango-view"
