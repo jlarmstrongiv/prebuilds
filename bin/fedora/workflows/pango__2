@@ -34,8 +34,12 @@ rm -rf "/var/task/${FILENAME:-}"
 rm -rf "/var/task/${FILENAME_REPOSITORY:-}"
 cd pango
 
+echo "$(pwd)"
 ls -l
+echo "$install_location"
 ls -l "$install_location"
+echo "$tmp_dir/pango"
+ls -l "$tmp_dir/pango"
 
 # compile
 meson compile -C "$install_location"
