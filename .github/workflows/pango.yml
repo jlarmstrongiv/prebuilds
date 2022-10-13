@@ -203,7 +203,7 @@ jobs:
             -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}__2"
 
       - uses: actions/upload-artifact@v3
-        timeout-minutes: 5
+        timeout-minutes: 15
         with:
           name: pango-build-artifacts
           path: "*.tar.gz"
@@ -273,6 +273,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         id: download-filename
+        timeout-minutes: 15
         with:
           name: pango-build-artifacts
           path: ./
