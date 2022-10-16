@@ -215,7 +215,6 @@ jobs:
 
   build-3:
     needs:
-      - setup
       - build-2
     runs-on: ubuntu-latest
     strategy:
@@ -279,6 +278,104 @@ jobs:
           path: ./
 
       - name: compile-3
+        shell: bash
+        env:
+          IMAGE: ${{ matrix.image }}
+          OS: ${{ steps.get-os.outputs.os }}
+          PLATFORM: ${{ matrix.platform }}
+          FILENAME: ${{ steps.get-filenames.outputs.filename }}
+          FILENAME_REPOSITORY: ${{ steps.get-filenames.outputs.filename_repository }}
+          # fix obscure docker error https://gist.github.com/nathabonfim59/b088db8752673e1e7acace8806390242
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+          docker run \
+            --security-opt seccomp=unconfined \
+            --platform "$PLATFORM" \
+            --env OS="$OS" \
+            --env FILENAME="$FILENAME" \
+            --env FILENAME_REPOSITORY="$FILENAME_REPOSITORY" \
+            --entrypoint "/bin/bash" \
+            --volume "$(pwd):/var/task" \
+            --rm "$IMAGE" \
+            -c "cd ~/ && /var/task/bin/$OS/workflows/${{ github.workflow }}__2"
+
+      - uses: actions/upload-artifact@v3
+        timeout-minutes: 15
+        with:
+          name: ${{ steps.get-os.outputs.os }}__${{ steps.get-architecture.outputs.architecture }}__pango-build-artifacts
+          path: "*.tar.gz"
+          if-no-files-found: error
+          retention-days: 1
+
+    # max timeout of 6 hours (60 minutes * 6)
+    timeout-minutes: 360
+
+  build-4:
+    needs:
+      - setup
+      - build-3
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        image:
+          - "public.ecr.aws/amazonlinux/amazonlinux:2022"
+          - "public.ecr.aws/lts/ubuntu:jammy"
+        platform:
+          - "linux/amd64"
+          - "linux/arm64"
+    steps:
+      - name: checkout repository
+        timeout-minutes: 5
+        uses: actions/checkout@v3
+
+      - name: setup docker
+        timeout-minutes: 15
+        uses: ./.github/composite/setup-docker
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - id: get-os
+        name: get os
+        timeout-minutes: 5
+        uses: ./.github/composite/get-os
+        with:
+          IMAGE: ${{ matrix.image }}
+
+      - id: get-architecture
+        name: get architecture
+        timeout-minutes: 5
+        uses: ./.github/composite/get-architecture
+        with:
+          PLATFORM: ${{ matrix.platform }}
+
+      - id: get-filenames
+        name: get filenames
+        timeout-minutes: 5
+        env:
+          OS: ${{ steps.get-os.outputs.os }}
+          ARCHITECTURE: ${{ steps.get-architecture.outputs.architecture }}
+        run: |
+          filename="${OS:-}__${ARCHITECTURE:-}__pango.tar.gz"
+          filename_repository="${OS:-}__${ARCHITECTURE:-}__pango-repository.tar.gz"
+          echo "::set-output name=filename::$filename"
+          echo "::set-output name=filename_repository::$filename_repository"
+          echo "$filename"
+          echo "$filename_repository"
+
+      - uses: actions/download-artifact@v3
+        id: download-filename
+        timeout-minutes: 15
+        with:
+          name: ${{ steps.get-os.outputs.os }}__${{ steps.get-architecture.outputs.architecture }}__pango-build-artifacts
+          path: ./
+
+      - name: compile-4
         shell: bash
         env:
           IMAGE: ${{ matrix.image }}
